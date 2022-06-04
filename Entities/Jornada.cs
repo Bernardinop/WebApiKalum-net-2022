@@ -1,9 +1,10 @@
 namespace WebApiKalum.Entities
 {
-    public class CarreraTecnica
+    public class Jornada
     {
-        public string CarreraId { get; set; }
-        public string Nombre { get; set; }
+        public string JornadaId { get; set; }
+        public string NombreCorto { get; set; }
+        public string Descripcion { get; set; }
         public virtual List<Aspirante> Aspirantes { get; set; }
         public virtual List<Inscripcion> Inscripciones { get; set; }
     }
