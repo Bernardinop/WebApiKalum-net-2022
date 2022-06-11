@@ -5,7 +5,7 @@ namespace WebApiKalum.Entities
         public string CargoId { get; set; }
         public string Descripcion { get; set; }
         public string Prefijo { get; set; }
-        public double Monto { get; set; }
+        public decimal Monto { get; set; }
         public bool GeneraMora { get; set; }
         public int PorcentajeMora { get; set; }
         public virtual List<CuentaPorCobrar> CuentaPorCobrar { get; set; }

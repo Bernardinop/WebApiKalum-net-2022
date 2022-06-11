@@ -7,6 +7,7 @@ namespace WebApiKalum
     {
         public DbSet<CarreraTecnica> CarreraTecnica { get; set; }
         public DbSet<Aspirante> Aspirante { get; set; }
+        public DbSet<Alumno> Alumno { get; set; }
         public DbSet<Jornada> Jornada { get; set; }
         public DbSet<ExamenAdmision> ExamenAdmision { get; set; }
         public DbSet<Inscripcion> Incripcion { get; set; }
