@@ -6,5 +6,6 @@ namespace WebApiKalum.Entities
         public string Nombre { get; set; }
         public virtual List<Aspirante> Aspirantes { get; set; }
         public virtual List<Inscripcion> Inscripciones { get; set; }
+        public virtual List<InversionCarreraTecnica> InversionCarreraTecnica { get; set; }
     }
 }

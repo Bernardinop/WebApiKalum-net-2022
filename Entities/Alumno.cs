@@ -9,5 +9,6 @@ namespace WebApiKalum.Entities
         public string Telefono { get; set; }
         public string Email { get; set; }
         public virtual List <Inscripcion> Inscripciones { get; set; }
+        public virtual List<CuentaPorCobrar> CuentaPorCobrar { get; set; }
     }
 }
