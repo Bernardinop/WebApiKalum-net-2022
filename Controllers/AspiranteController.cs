@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using WebApiKalum.Entities;
 using Microsoft.EntityFrameworkCore;
+using WebApiKalum.Dtos;
+using AutoMapper;
+using WebApiKalum.Utilities;
 
 namespace WebApiKalum.Controllers
 {
@@ -10,11 +13,13 @@ namespace WebApiKalum.Controllers
     {
         private readonly KalumDbContext DbContext;
         private readonly ILogger<AspiranteController> Logger;
+        private readonly IMapper Mapper;
 
-        public AspiranteController(KalumDbContext _DbContext, ILogger<AspiranteController> _Logger)
+        public AspiranteController(KalumDbContext _DbContext, ILogger<AspiranteController> _Logger, IMapper _Mapper)
         {
             this.DbContext = _DbContext;
             this.Logger = _Logger;
+            this.Mapper = _Mapper;
         }
 
         [HttpPost]
@@ -43,6 +48,22 @@ namespace WebApiKalum.Controllers
             await DbContext.SaveChangesAsync();
             Logger.LogInformation("Se ha creado el aspirante con exito");
             return Ok(value);
+        }
+
+        [HttpGet]
+        [ServiceFilter(typeof(ActionFilter))]
+        public async Task<ActionResult<IEnumerable<AspiranteListDTO>>> Get()
+        {
+            Logger.LogDebug("Iniciando proceso de consulta de aspirante");
+            List<Aspirante> lista = await DbContext.Aspirante.Include(a => a.Jornada).Include(a => a.CarreraTecnica).Include(a => a.ExamenAdmision).ToListAsync();
+            if (lista == null || lista.Count == 0)
+            {
+                Logger.LogWarning("No existen registros en aspirantes");
+                return new NoContentResult();
+            }
+            List<AspiranteListDTO> aspirantes = Mapper.Map<List<AspiranteListDTO>>(lista);
+            Logger.LogInformation("Listando aspirantes");
+            return Ok(aspirantes);
         }
     }
 }
