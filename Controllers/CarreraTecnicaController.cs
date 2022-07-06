@@ -3,6 +3,7 @@ using WebApiKalum.Entities;
 using Microsoft.EntityFrameworkCore;
 using WebApiKalum.Dtos;
 using AutoMapper;
+using WebApiKalum.Utilities;
 
 namespace WebApiKalum.Controllers
 {
@@ -20,7 +21,7 @@ namespace WebApiKalum.Controllers
             this.Mapper = _Mapper;
         }
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CarreraTecnicaCreateDTO>>> Get()
+        public async Task<ActionResult<IEnumerable<CarreraTecnica>>> Get()
         {
             List<CarreraTecnica> carrerasTecnicas = null;
             //Tarea 1
@@ -32,9 +33,24 @@ namespace WebApiKalum.Controllers
                 Logger.LogWarning("No existe carreras tecnicas");
                 return new NoContentResult();
             }
-            List<CarreraTecnicaCreateDTO> lista = Mapper.Map<List<CarreraTecnicaCreateDTO>>(carrerasTecnicas);
+            List<CarreraTecnicaListDTO> lista = Mapper.Map<List<CarreraTecnicaListDTO>>(carrerasTecnicas);
             Logger.LogInformation("Se ejecuto la peticion de forma exitosa");
             return Ok(carrerasTecnicas);
+        }
+
+        [HttpGet("page/{page}")]
+        public async Task<ActionResult<IEnumerable<CarreraTecnicaListDTO>>> GetPaginacion(int page)
+        {
+            var queryable = this.DbContext.CarreraTecnica.Include(ct => ct.Aspirantes).Include(ct => ct.Inscripciones).AsQueryable();
+            var paginacion = new HttpResponsePaginacion<CarreraTecnica>(queryable, page);
+            if (paginacion.Content == null && paginacion.Content.Count == 0)
+            {
+                return NoContent();
+            }
+            else
+            {
+                return Ok(paginacion);
+            }
         }
 
         [HttpGet("{id}", Name = "GetCarreraTecnica")]

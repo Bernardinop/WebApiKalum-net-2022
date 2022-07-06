@@ -1,6 +1,6 @@
 namespace WebApiKalum.Dtos
 {
-    public class InscripcionCreateDTO
+    public class InscripcionListDTO
     {
         public string Carne { get; set; }
         public string Ciclo { get; set; }

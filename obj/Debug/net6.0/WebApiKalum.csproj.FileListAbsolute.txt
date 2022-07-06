@@ -65,3 +65,4 @@ C:\Users\HP\Desktop\2020\NET\Backend\prod\WebApiKalum\bin\Debug\net6.0\Newtonsof
 C:\Users\HP\Desktop\2020\NET\Backend\prod\WebApiKalum\bin\Debug\net6.0\Newtonsoft.Json.Bson.dll
 C:\Users\HP\Desktop\2020\NET\Backend\prod\WebApiKalum\bin\Debug\net6.0\AutoMapper.dll
 C:\Users\HP\Desktop\2020\NET\Backend\prod\WebApiKalum\bin\Debug\net6.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
+C:\Users\HP\Desktop\2020\NET\Backend\prod\WebApiKalum\bin\Debug\net6.0\RabbitMQ.Client.dll

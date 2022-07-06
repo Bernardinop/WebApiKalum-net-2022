@@ -13,8 +13,8 @@ namespace WebApiKalum.Utilities
             CreateMap<Jornada, JornadaCreateDTO>();
             CreateMap<ExamenAdmision, ExamenAdmisionCreateDTO>();
             CreateMap<Aspirante, AspiranteListDTO>().ConstructUsing(e => new AspiranteListDTO { NombreCompleto = $"{e.Apellidos} {e.Nombres}" });
-            CreateMap<Aspirante, AspiranteCreateDTO>().ConstructUsing(e => new AspiranteCreateDTO { NombreCompleto = $"{e.Apellidos} {e.Nombres}"});
-            CreateMap<Inscripcion, InscripcionCreateDTO>();
+            CreateMap<Aspirante, AspiranteCarreraListDTO>().ConstructUsing(e => new AspiranteCarreraListDTO { NombreCompleto = $"{e.Apellidos} {e.Nombres}"});
+            CreateMap<Inscripcion, InscripcionListDTO>();
             CreateMap<CarreraTecnica, CarreraTecnicaListDTO>();
 
         }
