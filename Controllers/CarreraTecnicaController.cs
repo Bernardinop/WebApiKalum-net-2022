@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using WebApiKalum.Entities;
 using Microsoft.EntityFrameworkCore;
+using WebApiKalum.Dtos;
+using AutoMapper;
+using WebApiKalum.Utilities;
 
 namespace WebApiKalum.Controllers
 {
@@ -10,10 +13,12 @@ namespace WebApiKalum.Controllers
     {
         private readonly KalumDbContext DbContext;
         private readonly ILogger<CarreraTecnicaController> Logger;
-        public CarreraTecnicaController(KalumDbContext _Dbcontext, ILogger<CarreraTecnicaController> _Logger)
+        private readonly IMapper Mapper;
+        public CarreraTecnicaController(KalumDbContext _Dbcontext, ILogger<CarreraTecnicaController> _Logger, IMapper _Mapper)
         {
             this.DbContext = _Dbcontext;
             this.Logger = _Logger;
+            this.Mapper = _Mapper;
         }
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CarreraTecnica>>> Get()
@@ -28,8 +33,24 @@ namespace WebApiKalum.Controllers
                 Logger.LogWarning("No existe carreras tecnicas");
                 return new NoContentResult();
             }
+            List<CarreraTecnicaListDTO> lista = Mapper.Map<List<CarreraTecnicaListDTO>>(carrerasTecnicas);
             Logger.LogInformation("Se ejecuto la peticion de forma exitosa");
             return Ok(carrerasTecnicas);
+        }
+
+        [HttpGet("page/{page}")]
+        public async Task<ActionResult<IEnumerable<CarreraTecnicaListDTO>>> GetPaginacion(int page)
+        {
+            var queryable = this.DbContext.CarreraTecnica.Include(ct => ct.Aspirantes).Include(ct => ct.Inscripciones).AsQueryable();
+            var paginacion = new HttpResponsePaginacion<CarreraTecnica>(queryable, page);
+            if (paginacion.Content == null && paginacion.Content.Count == 0)
+            {
+                return NoContent();
+            }
+            else
+            {
+                return Ok(paginacion);
+            }
         }
 
         [HttpGet("{id}", Name = "GetCarreraTecnica")]
@@ -47,14 +68,15 @@ namespace WebApiKalum.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<CarreraTecnica>> Post([FromBody] CarreraTecnica value)
+        public async Task<ActionResult<CarreraTecnica>> Post([FromBody] CarreraTecnicaCreateDTO value)
         {
             Logger.LogDebug("Iniciando el proceso de agregar una carrera tecnica nueva");
-            value.CarreraId = Guid.NewGuid().ToString().ToUpper();
-            await DbContext.CarreraTecnica.AddAsync(value);
+            CarreraTecnica nuevo = Mapper.Map<CarreraTecnica>(value);
+            nuevo.CarreraId = Guid.NewGuid().ToString().ToUpper();
+            await DbContext.CarreraTecnica.AddAsync(nuevo);
             await DbContext.SaveChangesAsync();
             Logger.LogInformation("Finalizando el proceso para agregar una carrera tecnica nueva");
-            return new CreatedAtRouteResult("GetCarreraTecnica", new { id = value.CarreraId }, value);
+            return new CreatedAtRouteResult("GetCarreraTecnica", new { id = nuevo.CarreraId }, nuevo);
         }
 
         [HttpDelete("{id}")]
