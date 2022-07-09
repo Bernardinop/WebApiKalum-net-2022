@@ -49,7 +49,7 @@ namespace WebApiKalum.Controllers
             }
             JornadaListDTO horario = Mapper.Map<JornadaListDTO>(jornada);
             Logger.LogInformation("Finalizando el proceso de busqueda de forma exitosa");
-            return Ok(jornada);
+            return Ok(horario);
         }
 
         [HttpPost]
@@ -74,6 +74,7 @@ namespace WebApiKalum.Controllers
                 Logger.LogWarning("No existen registros para paginar");
                 return NoContent();
             }
+            List<JornadaListDTO> jornadas = Mapper.Map<List<JornadaListDTO>>(paginacion.Content);
             Logger.LogInformation("Finalizando proceso de paginacion jornada");
             return Ok(paginacion);
         }
