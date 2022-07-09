@@ -68,28 +68,5 @@ namespace WebApiKalum.Controllers
                 return Ok(paginacion);
             }
         }
-
-        [HttpPost]
-        public async Task<ActionResult<CuentaPorCobrar>> Post([FromBody] CuentaPorCobrarCreateDTO value)
-        {
-            Logger.LogDebug("Iniciando proceso de agregar cuenta por cobrar");
-            Alumno alumno = await DbContext.Alumno.FirstOrDefaultAsync(a => a.Carne == value.Carne);
-            if (alumno == null)
-            {
-                Logger.LogInformation($"No existe alumno con carne {value.Carne}");
-                return BadRequest();
-            }
-            Cargo cargo = await DbContext.Cargo.FirstOrDefaultAsync(c => c.CargoId == value.CargoId);
-            if (cargo == null)
-            {
-                Logger.LogInformation($"No existe cargo con id {value.CargoId}");
-                return BadRequest();
-            }
-            CuentaPorCobrar nuevo = Mapper.Map<CuentaPorCobrar>(value);
-            await DbContext.CuentaPorCobrar.AddAsync(nuevo);
-            await DbContext.SaveChangesAsync();
-            Logger.LogInformation("Finalizando el proceso de agregar registro a cuenta por cobrar");
-            return new CreatedAtRouteResult("GetCuentaxCobrar", new { carne = nuevo.Carne }, value);
-        }
     }
 }
