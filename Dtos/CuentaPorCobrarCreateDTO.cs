@@ -1,12 +1,12 @@
 using System.ComponentModel.DataAnnotations;
 using WebApiKalum.Helpers;
-namespace WebApiKalum.Entities
+
+namespace WebApiKalum.Dtos
 {
-    public class CuentaPorCobrar
+    public class CuentaPorCobrarCreateDTO
     {
         [Required(ErrorMessage = "El campo {0} es requerido")]
         public string Correlativo { get; set; }
-        [Required(ErrorMessage = "El campo {0} es requerido")]
         [StringLength(4, MinimumLength = 4, ErrorMessage = "El campo Anio debe ser de 4 caracteres")]
         [Anio]
         public string Anio { get; set; }
@@ -31,7 +31,6 @@ namespace WebApiKalum.Entities
         [Required(ErrorMessage = "El campo {0} es requerido")]
         [DataType(DataType.Currency)]
         public decimal Descuento { get; set; }
-        public virtual Cargo Cargo { get; set; }
-        public virtual Alumno Alumno { get; set; }
+
     }
 }

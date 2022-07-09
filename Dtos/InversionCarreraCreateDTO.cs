@@ -1,10 +1,8 @@
 using System.ComponentModel.DataAnnotations;
-namespace WebApiKalum.Entities
+namespace WebApiKalum.Dtos
 {
-    public class InversionCarreraTecnica
+    public class InversionCarreraCreateDTO
     {
-        [Required(ErrorMessage = "El campo {0} es requerido")]
-        public string InversionId { get; set; }
         [Required(ErrorMessage = "El campo {0} es requerido")]
         public string CarreraId { get; set; }
         [Required(ErrorMessage = "El campo {0} es requerido")]
@@ -16,6 +14,6 @@ namespace WebApiKalum.Entities
         [Required(ErrorMessage = "El campo {0} es requerido")]
         [DataType(DataType.Currency)]
         public decimal MontoPagos { get; set; }
-        public virtual CarreraTecnica CarreraTecnica { get; set; }
+
     }
 }
