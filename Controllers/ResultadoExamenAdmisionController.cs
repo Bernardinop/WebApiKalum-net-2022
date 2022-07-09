@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using WebApiKalum.Entities;
 using Microsoft.EntityFrameworkCore;
+using WebApiKalum.Dtos;
+using AutoMapper;
+using WebApiKalum.Utilities;
 
 namespace WebApiKalum.Controllers
 {
@@ -10,15 +13,17 @@ namespace WebApiKalum.Controllers
     {
         private readonly KalumDbContext DbContext;
         private readonly ILogger<ResultadoExamenAdmisionController> Logger;
+        private readonly IMapper Mapper;
 
-        public ResultadoExamenAdmisionController(KalumDbContext _DbContext, ILogger<ResultadoExamenAdmisionController> _Logger)
+        public ResultadoExamenAdmisionController(KalumDbContext _DbContext, ILogger<ResultadoExamenAdmisionController> _Logger, IMapper _Mapper)
         {
             this.DbContext = _DbContext;
             this.Logger = _Logger;
+            this.Mapper = _Mapper;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ResultadoExamenAdmisionController>>> Get()
+        public async Task<ActionResult<IEnumerable<ResultadoExamenAdmisionListDTO>>> Get()
         {
             List<ResultadoExamenAdmision> resultados = null;
             Logger.LogDebug("Iniciando proceso de consulta de resultado del examen de admision");
@@ -28,22 +33,39 @@ namespace WebApiKalum.Controllers
                 Logger.LogWarning("No existen resultados");
                 return new NoContentResult();
             }
+            List<ResultadoExamenAdmisionListDTO> resultadosExamenes = Mapper.Map<List<ResultadoExamenAdmisionListDTO>>(resultados);
             Logger.LogInformation("Se ejecuto la petición de forma exitosa");
-            return Ok(resultados);
+            return Ok(resultadosExamenes);
         }
 
         [HttpGet("{noExpediente}", Name = "GetResultado")]
-        public async Task<ActionResult<ResultadoExamenAdmision>> GetResultado(string noExpediente)
+        public async Task<ActionResult<ResultadoExamenAdmisionListDTO>> GetResultado(string noExpediente)
         {
             Logger.LogDebug("Iniciando el proceso de busqueda de resultado con el expediente " + noExpediente);
-            var resultados = await DbContext.ResultadoExamenAdmision.Include(rea => rea.Aspirante).FirstOrDefaultAsync(rea => rea.NoExpediente == noExpediente);
-            if (resultados == null)
+            var resultado = await DbContext.ResultadoExamenAdmision.Include(rea => rea.Aspirante).FirstOrDefaultAsync(rea => rea.NoExpediente == noExpediente);
+            if (resultado == null)
             {
                 Logger.LogWarning("Mo existe resultados para el expediente " + noExpediente);
                 return new NoContentResult();
             }
+            ResultadoExamenAdmisionListDTO resultadoExamen = Mapper.Map<ResultadoExamenAdmisionListDTO>(resultado);
             Logger.LogInformation("Finalizando el proceso de busqueda de forma exitosa");
-            return Ok(resultados);
+            return Ok(resultadoExamen);
+        }
+
+        [HttpGet("page/{page}")]
+        public async Task<ActionResult<IEnumerable<ResultadoExamenAdmisionListDTO>>> GetPaginacion(int page)
+        {
+            Logger.LogDebug("Iniciando paginacion resultados de exmanes de admisión");
+            var queryable = DbContext.ResultadoExamenAdmision.Include(re => re.Aspirante).AsQueryable();
+            var paginacion = new HttpResponsePaginacion<ResultadoExamenAdmision>(queryable, page);
+            if (paginacion.Content == null && paginacion.Content.Count == 0)
+            {
+                Logger.LogWarning("No existen regisros para paginar");
+                return NoContent();
+            }
+            Logger.LogInformation("Finalizando proceso de paginación de resultados de examen de admisión");
+            return Ok(paginacion);
         }
 
         [HttpPost]
@@ -93,7 +115,7 @@ namespace WebApiKalum.Controllers
             Logger.LogInformation($"Los datos del resultados de amision con el expediente {noExpediente} han sido actualizados correctamente");
             return NoContent();
         }
-        
+
 
     }
 }

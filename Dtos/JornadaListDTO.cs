@@ -9,7 +9,7 @@ namespace WebApiKalum.Dtos
         public string NombreCorto { get; set; }
         [Required(ErrorMessage = "El campo {0} es requerido")]
         public string Descripcion { get; set; }
-        public virtual List<AspiranteListDTO> Aspirantes { get; set; }
+        public virtual List<AspiranteCarreraListDTO> Aspirantes { get; set; }
         public virtual List<InscripcionListDTO> Inscripciones { get; set; }
     }
 }

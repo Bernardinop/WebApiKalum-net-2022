@@ -21,7 +21,7 @@ namespace WebApiKalum.Controllers
             this.Mapper = _Mapper;
         }
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CarreraTecnica>>> Get()
+        public async Task<ActionResult<IEnumerable<CarreraTecnicaListDTO>>> Get()
         {
             List<CarreraTecnica> carrerasTecnicas = null;
             //Tarea 1
@@ -33,9 +33,24 @@ namespace WebApiKalum.Controllers
                 Logger.LogWarning("No existe carreras tecnicas");
                 return new NoContentResult();
             }
-            List<CarreraTecnicaListDTO> lista = Mapper.Map<List<CarreraTecnicaListDTO>>(carrerasTecnicas);
+            List<CarreraTecnicaListDTO> carreras = Mapper.Map<List<CarreraTecnicaListDTO>>(carrerasTecnicas);
             Logger.LogInformation("Se ejecuto la peticion de forma exitosa");
-            return Ok(carrerasTecnicas);
+            return Ok(carreras);
+        }
+
+        [HttpGet("{id}", Name = "GetCarreraTecnica")]
+        public async Task<ActionResult<CarreraTecnicaListDTO>> getCarreraTecnica(string id)
+        {
+            Logger.LogDebug("Iniciando el proceso de busqueda con el id " + id);
+            var carrera = await DbContext.CarreraTecnica.Include(c => c.Aspirantes).Include(c => c.Inscripciones).FirstOrDefaultAsync(ct => ct.CarreraId == id);
+            if (carrera == null)
+            {
+                Logger.LogWarning("No existe la carrera tecnica con el id" + id);
+                return new NoContentResult();
+            }
+            CarreraTecnicaListDTO carreraTecnica = Mapper.Map<CarreraTecnicaListDTO>(carrera);
+            Logger.LogInformation("Finalizando el proceso de busqueda de forma exitosa");
+            return Ok(carreraTecnica);
         }
 
         [HttpGet("page/{page}")]
@@ -51,20 +66,6 @@ namespace WebApiKalum.Controllers
             {
                 return Ok(paginacion);
             }
-        }
-
-        [HttpGet("{id}", Name = "GetCarreraTecnica")]
-        public async Task<ActionResult<CarreraTecnica>> getCarreraTecnica(string id)
-        {
-            Logger.LogDebug("Iniciando el proceso de busqueda con el id " + id);
-            var carrera = await DbContext.CarreraTecnica.Include(c => c.Aspirantes).Include(c => c.Inscripciones).FirstOrDefaultAsync(ct => ct.CarreraId == id);
-            if (carrera == null)
-            {
-                Logger.LogWarning("No existe la carrera tecnica con el id" + id);
-                return new NoContentResult();
-            }
-            Logger.LogInformation("Finalizando el proceso de busqueda de forma exitosa");
-            return Ok(carrera);
         }
 
         [HttpPost]
